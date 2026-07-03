@@ -12,7 +12,7 @@ export function createScene(){
     0.1, // near clip
     1000 // far clip
     )
-    camera.position.z = 50
+    camera.position.z = 100
 
     // renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true })
