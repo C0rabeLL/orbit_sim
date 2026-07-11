@@ -1,1 +1,1 @@
-working. now contains a sun-planet-moon system.
+Working. Now contains a sun-planet-moon system, figure-8 system and a blackhole simulation.
