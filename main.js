@@ -23,15 +23,27 @@ function loadPreset(name) {
   }
 }
 
+function reset() {
+  selected = null
+  bodyF.children.slice().forEach(c => c.dispose())
+  loadPreset(PARAMS.presets)
+}
+
+function deleteBody() {
+  if (!selected) return
+  scene.remove(selected.mesh)
+  bodies.splice(bodies.indexOf(selected), 1)
+  bodyF.children.slice().forEach(c => c.dispose())
+  selected = null
+}
+
 const PARAMS = {
     pause: false,
     speed: 1,
     presets: 'Sun-Planet-Moon',
 }
 
-function reset() {
-  loadPreset(PARAMS.presets)
-}
+
 
 const { pane, controlF, bodyF } = createUI(PARAMS, reset, loadPreset)
 loadPreset(PARAMS.presets)
@@ -74,7 +86,7 @@ renderer.domElement.addEventListener('click', (event) => {
     const hitMesh = hits[0].object
     const body = bodies.find(b => b.mesh === hitMesh)
     selected = body
-    updateUI(body, bodyF)
+    updateUI(body, bodyF, deleteBody)
   }
   else{
     raycaster.ray.intersectPlane(plane, point)

@@ -16,11 +16,12 @@ export function createUI(PARAMS, reset, loadPreset) {
     return { pane, controlF, bodyF }
 }
 
-export function updateUI(body, folder) {
+export function updateUI(body, folder, deleteBody) {
     folder.children.slice().forEach(c => c.dispose())
     folder.addBinding(body, "mass")
     folder.addBinding(body, "position", { step: 0.01 })
     folder.addBinding(body, "velocity", { step: 0.01 })
     folder.addBinding(body, "acceleration", { step: 0.01 })
+    folder.addButton({ title: 'Delete body' }).on('click', deleteBody)
     return folder
 }
