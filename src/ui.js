@@ -5,6 +5,7 @@ export function createUI(PARAMS, reset, loadPreset) {
     const pane = new Pane()
     const controlF = pane.addFolder({title: 'Controls'})
     controlF.addBinding(PARAMS, 'pause')
+    controlF.addBinding(PARAMS, 'trails')
     controlF.addBinding(PARAMS, 'speed', {min: 0, max: 10, step: 0.1})
     controlF.addButton({ title: 'Reset' }).on('click', reset)
     const options = {}

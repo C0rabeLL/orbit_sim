@@ -29,6 +29,7 @@ export function applyPhysics(bodies, G, dt, scene) {
             A.position.distanceTo(B.position) < 0.6 * Math.cbrt(B.mass)) {
             B.mass += A.mass
             scene.remove(A.mesh)
+            scene.remove(A.trailLine)
             bodies.splice(i, 1)
             showMessage('A body got swallowed')
             break

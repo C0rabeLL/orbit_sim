@@ -12,7 +12,10 @@ const G = 1
 let dt = 0.02
 
 function loadPreset(name) {
-  for (const body of bodies) scene.remove(body.mesh)
+  for (const body of bodies){
+    scene.remove(body.mesh)
+    scene.remove(body.trailLine)
+  }
   bodies.length = 0
 
   for (const d of PRESETS[name]) {
@@ -20,6 +23,7 @@ function loadPreset(name) {
     body.velocity = new THREE.Vector3(...d.v)
     bodies.push(body)
     scene.add(body.mesh)
+    scene.add(body.trailLine)
   }
 }
 
@@ -32,6 +36,7 @@ function reset() {
 function deleteBody() {
   if (!selected) return
   scene.remove(selected.mesh)
+  scene.remove(selected.trailLine)
   bodies.splice(bodies.indexOf(selected), 1)
   bodyF.children.slice().forEach(c => c.dispose())
   selected = null
@@ -41,6 +46,7 @@ const PARAMS = {
     pause: false,
     speed: 1,
     presets: 'Sun-Planet-Moon',
+    trails: true,
 }
 
 
@@ -55,6 +61,10 @@ function animate() {
     const frac = PARAMS.speed - steps
     for (let i = 0; i < steps; i++){ applyPhysics(bodies, G, dt, scene)}
     applyPhysics(bodies, G, dt * frac, scene)
+  }
+  for (const b of bodies){
+    b.trailLine.visible = PARAMS.trails
+    if(!PARAMS.pause) b.updateTrail()
   }
   controls.update()
   pane.refresh() 
@@ -93,6 +103,7 @@ renderer.domElement.addEventListener('click', (event) => {
     const body = new Body(50, point.clone(), 0xffffff)
     bodies.push(body)
     scene.add(body.mesh)
+    scene.add(body.trailLine)
   }
 })
 
