@@ -13,4 +13,5 @@ export const PRESETS = {
         {mass: 50, pos: [ 14.55, -3.646, 0], v: [ 0.851, 0.789, 0], color: 0x66ccff},
         {mass: 50, pos: [0,0,0], v: [-1.702, -1.579, 0], color: 0xffdd66},
     ],
+    'Empty': []
 }

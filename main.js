@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { createScene } from './src/scene.js'
 import Body from './src/body.js'
 import { applyPhysics } from './src/physics.js'
-import { createUI } from './src/ui.js'
+import { createUI, updateUI } from './src/ui.js'
 import { PRESETS } from './src/presets.js'
 
 const { scene, camera, renderer, controls } = createScene()
@@ -33,7 +33,7 @@ function reset() {
   loadPreset(PARAMS.presets)
 }
 
-createUI(PARAMS, reset, loadPreset)
+const { pane, controlF, bodyF } = createUI(PARAMS, reset, loadPreset)
 loadPreset(PARAMS.presets)
 // render loop
 function animate() {
@@ -45,8 +45,44 @@ function animate() {
     applyPhysics(bodies, G, dt * frac, scene)
   }
   controls.update()
+  pane.refresh() 
   renderer.render(scene, camera)
 }
+
 animate()
+
+//clicking
+const raycaster = new THREE.Raycaster()
+const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0)
+const point = new THREE.Vector3()
+let selected = null
+
+renderer.domElement.addEventListener('click', (event) => {
+  const rect = renderer.domElement.getBoundingClientRect()
+  const x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+  const y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+  //console.log(x.toFixed(2), y.toFixed(2))
+
+  const mouse = new THREE.Vector2(x, y)
+  raycaster.setFromCamera(mouse, camera)
+
+  const meshes = bodies.map(b => b.mesh)
+  const hits = raycaster.intersectObjects(meshes)
+  //console.log(hits.length)
+
+  if (hits.length > 0) {
+    const hitMesh = hits[0].object
+    const body = bodies.find(b => b.mesh === hitMesh)
+    selected = body
+    updateUI(body, bodyF)
+  }
+  else{
+    raycaster.ray.intersectPlane(plane, point)
+    const body = new Body(50, point.clone(), 0xffffff)
+    bodies.push(body)
+    scene.add(body.mesh)
+  }
+})
+
 
 

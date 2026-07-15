@@ -2,13 +2,25 @@ import { Pane } from 'tweakpane'
 import { PRESETS } from './presets.js'
 
 export function createUI(PARAMS, reset, loadPreset) {
-    const pane = new Pane({ title: 'Controls'})
-    pane.addBinding(PARAMS, 'pause')
-    pane.addBinding(PARAMS, 'speed', {min: 0, max: 10, step: 0.1})
-    pane.addButton({ title: 'Reset' }).on('click', reset)
+    const pane = new Pane()
+    const controlF = pane.addFolder({title: 'Controls'})
+    controlF.addBinding(PARAMS, 'pause')
+    controlF.addBinding(PARAMS, 'speed', {min: 0, max: 10, step: 0.1})
+    controlF.addButton({ title: 'Reset' }).on('click', reset)
     const options = {}
     for (const name of Object.keys(PRESETS)) options[name] = name
-    pane.addBinding(PARAMS, 'presets', 
+    controlF.addBinding(PARAMS, 'presets', 
         { options }).on('change', (ev) => loadPreset(ev.value))
-    return pane
+
+    const bodyF = pane.addFolder({ title: 'Selected body'})
+    return { pane, controlF, bodyF }
+}
+
+export function updateUI(body, folder) {
+    folder.children.slice().forEach(c => c.dispose())
+    folder.addBinding(body, "mass")
+    folder.addBinding(body, "position", { step: 0.01 })
+    folder.addBinding(body, "velocity", { step: 0.01 })
+    folder.addBinding(body, "acceleration", { step: 0.01 })
+    return folder
 }
